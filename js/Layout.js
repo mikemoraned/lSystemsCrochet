@@ -5,8 +5,9 @@
 
   Visitor = (function() {
 
-    function Visitor(nodes, links) {
+    function Visitor(posMap, nodes, links) {
       var _this = this;
+      this.posMap = posMap;
       this.nodes = nodes;
       this.links = links;
       this.visit = function(parent, children) {
@@ -15,12 +16,30 @@
     }
 
     Visitor.prototype.visit = function(parent, children) {
-      var child, _i, _len, _results;
-      this.nodes.push(parent);
+      var child, childPos, link, parentPos, _i, _len, _results;
+      parentPos = this.posMap[parent.id];
+      if (parentPos == null) {
+        parentPos = this.nodes.length;
+        this.nodes.push(parent);
+        this.posMap[parent.id] = parentPos;
+      } else {
+        this.nodes.push(parent);
+      }
+      console.log("posMap:");
+      console.dir(this.posMap);
+      console.log("id " + parent.id + " -> " + parentPos);
       _results = [];
       for (_i = 0, _len = children.length; _i < _len; _i++) {
         child = children[_i];
-        _results.push(child.accept(this));
+        child.accept(this);
+        childPos = this.posMap[child.id];
+        console.log("parent -> child: " + parentPos + " -> " + childPos);
+        link = {};
+        link.source = parentPos;
+        link.target = childPos;
+        console.log("link to child " + child.id + ":");
+        console.dir(link);
+        _results.push(this.links.push(link));
       }
       return _results;
     };
@@ -73,6 +92,7 @@
 
     Layout.prototype._setup = function() {
       var links, nodes, _ref;
+      this.posMap = {};
       this.svg = d3.select(this.selector);
       _ref = this._traverse(), nodes = _ref[0], links = _ref[1];
       return this.force = d3.layout.force().nodes(nodes).links(links).size([this.width, this.height]).start();
@@ -110,7 +130,7 @@
       var links, nodes, root, visitor, _i, _len, _ref;
       nodes = [];
       links = [];
-      visitor = new Visitor(nodes, links);
+      visitor = new Visitor(this.posMap, nodes, links);
       _ref = this.roots;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         root = _ref[_i];

@@ -1,12 +1,30 @@
 
 class Visitor
 
-  constructor: (@nodes, @links) ->
+  constructor: (@posMap, @nodes, @links) ->
+
 
   visit: (parent, children) =>
-    @nodes.push(parent)
+    parentPos = @posMap[parent.id]
+    if not parentPos?
+      parentPos = @nodes.length
+      @nodes.push(parent)
+      @posMap[parent.id] = parentPos
+    else
+      @nodes.push(parent)
+    console.log("posMap:")
+    console.dir(@posMap)
+    console.log("id #{parent.id} -> #{parentPos}")
     for child in children
       child.accept(@)
+      childPos = @posMap[child.id]
+      console.log("parent -> child: #{parentPos} -> #{childPos}")
+      link = {}
+      link.source = parentPos
+      link.target = childPos
+      console.log("link to child #{child.id}:")
+      console.dir(link)
+      @links.push(link)
 
 class Layout
 
@@ -27,6 +45,7 @@ class Layout
     @_redraw()
 
   _setup: () =>
+    @posMap = {}
     @svg = d3.select(@selector)
     [nodes, links] = @_traverse()
     @force = d3.layout.force()
@@ -69,7 +88,7 @@ class Layout
     nodes = []
     links = []
 
-    visitor = new Visitor(nodes, links)
+    visitor = new Visitor(@posMap, nodes, links)
     for root in @roots
       root.accept(visitor)
 
