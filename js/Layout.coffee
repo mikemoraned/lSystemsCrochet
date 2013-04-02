@@ -55,6 +55,20 @@ class Layout
       .size([@width, @height])
       .start()
 
+    @force.on("tick", () =>
+      @svg.selectAll(".link")
+        .data(@links)
+        .attr("x1", (d) -> d.source.x )
+        .attr("y1", (d) -> d.source.y )
+        .attr("x2", (d) -> d.target.x )
+        .attr("y2", (d) -> d.target.y )
+
+      @svg.selectAll(".node")
+        .data(@nodes)
+        .attr("cx", (d) -> d.x )
+        .attr("cy", (d) -> d.y )
+    )
+
   _redraw: =>
     @force
       .nodes(@nodes)
@@ -71,18 +85,6 @@ class Layout
       .attr("class", (d) -> "node #{d.color}")
       .attr("r", 5)
       .call(@force.drag)
-
-    @force.on("tick", () ->
-      link
-        .attr("x1", (d) -> d.source.x )
-        .attr("y1", (d) -> d.source.y )
-        .attr("x2", (d) -> d.target.x )
-        .attr("y2", (d) -> d.target.y )
-
-      node
-        .attr("cx", (d) -> d.x )
-        .attr("cy", (d) -> d.y )
-    )
 
 #  _traverse: () =>
 #    nodes = []

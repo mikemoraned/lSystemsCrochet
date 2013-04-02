@@ -48,23 +48,13 @@
     };
 
     Layout.prototype._setup = function() {
+      var _this = this;
       this.svg = d3.select(this.selector);
       this.nodes = this.outerLayer;
       this.links = [];
-      return this.force = d3.layout.force().nodes(this.nodes).links(this.links).size([this.width, this.height]).start();
-    };
-
-    Layout.prototype._redraw = function() {
-      var link, node;
-      this.force.nodes(this.nodes).links(this.links).start();
-      link = this.svg.selectAll(".link").data(this.links).enter().append("line").attr("class", "link");
-      node = this.svg.selectAll(".node").data(this.nodes, function(d) {
-        return d.id;
-      }).enter().append("circle").attr("class", function(d) {
-        return "node " + d.color;
-      }).attr("r", 5).call(this.force.drag);
+      this.force = d3.layout.force().nodes(this.nodes).links(this.links).size([this.width, this.height]).start();
       return this.force.on("tick", function() {
-        link.attr("x1", function(d) {
+        _this.svg.selectAll(".link").data(_this.links).attr("x1", function(d) {
           return d.source.x;
         }).attr("y1", function(d) {
           return d.source.y;
@@ -73,12 +63,23 @@
         }).attr("y2", function(d) {
           return d.target.y;
         });
-        return node.attr("cx", function(d) {
+        return _this.svg.selectAll(".node").data(_this.nodes).attr("cx", function(d) {
           return d.x;
         }).attr("cy", function(d) {
           return d.y;
         });
       });
+    };
+
+    Layout.prototype._redraw = function() {
+      var link, node;
+      this.force.nodes(this.nodes).links(this.links).start();
+      link = this.svg.selectAll(".link").data(this.links).enter().append("line").attr("class", "link");
+      return node = this.svg.selectAll(".node").data(this.nodes, function(d) {
+        return d.id;
+      }).enter().append("circle").attr("class", function(d) {
+        return "node " + d.color;
+      }).attr("r", 5).call(this.force.drag);
     };
 
     return Layout;
