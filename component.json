@@ -1,0 +1,9 @@
+{
+  "name": "WorkingArea",
+  "version": "0.0.0",
+  "dependencies": {
+    "d3": "~3.1.4",
+    "knockout": "~2.2.1",
+    "jquery": "~1.9.1"
+  }
+}
