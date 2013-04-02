@@ -19,6 +19,9 @@
       this.start = function() {
         return Layout.prototype.start.apply(_this, arguments);
       };
+      this._newParticle = function() {
+        return Layout.prototype._newParticle.apply(_this, arguments);
+      };
       this.grow = function() {
         return Layout.prototype.grow.apply(_this, arguments);
       };
@@ -38,14 +41,23 @@
         _ref1 = parent.grow();
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           child = _ref1[_j];
-          if (firstChild == null) {
-            firstChild = child;
-          }
+          this._newParticle();
           growth.push(child);
-          lastChild = child;
         }
       }
       return this.outerLayer = growth;
+    };
+
+    Layout.prototype._newParticle = function() {
+      var center, p;
+      center = new Vector(this.width * Math.random(), this.height * Math.random());
+      p = new Particle(6.0);
+      p.colour = 'DC0048';
+      p.moveTo(center);
+      p.setRadius(10.0);
+      p.behaviours.push(this.edge);
+      p.behaviours.push(this.wander);
+      return this.physics.particles.push(p);
     };
 
     Layout.prototype.start = function() {
@@ -54,7 +66,7 @@
     };
 
     Layout.prototype._setup = function() {
-      var center, container, edge, gap, i, max, min, p, _i;
+      var center, container, gap, max, min;
       this.physics = new Physics();
       this.height = window.innerHeight;
       this.width = window.innerWidth;
@@ -65,17 +77,10 @@
       gap = 50.0;
       min = new Vector(-gap, -gap);
       max = new Vector(this.width + gap, this.height + gap);
-      edge = new EdgeBounce(min, max);
+      this.edge = new EdgeBounce(min, max);
+      this.wander = new Wander(0.05, 100.0, 80.0);
       center = new Vector(this.width * 0.5, this.height * 0.5);
       console.dir(center);
-      for (i = _i = 0; _i <= 100; i = ++_i) {
-        p = new Particle(6.0);
-        p.colour = 'DC0048';
-        p.moveTo(center);
-        p.setRadius(1.0);
-        p.behaviours.push(edge);
-        this.physics.particles.push(p);
-      }
       this.renderer = new CanvasRenderer();
       container = $(this.selector);
       container.get(0).appendChild(this.renderer.domElement);
@@ -85,9 +90,9 @@
     };
 
     Layout.prototype._redraw = function() {
+      requestAnimationFrame(this._redraw);
       this.physics.step();
-      this.renderer.render(this.physics);
-      return requestAnimationFrame(this._redraw);
+      return this.renderer.render(this.physics);
     };
 
     return Layout;

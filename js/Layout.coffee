@@ -8,22 +8,37 @@ class Layout
 
   grow: =>
     console.log("Grow!")
+
     growth = []
     firstChild = null
     lastChild = null
     for parent in @outerLayer
       for child in parent.grow()
-        if not firstChild?
-          firstChild = child
+        @_newParticle()
+#        if not firstChild?
+#          firstChild = child
 #        @nodes.push(child)
 #        @links.push({ source: parent, target: child })
 #        if lastChild?
 #          @links.push({ source: lastChild, target: child, strength: 0.5 })
         growth.push(child)
-        lastChild = child
+#        lastChild = child
 #    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
     @outerLayer = growth
 #    @_redraw()
+
+  _newParticle: () =>
+    center = new Vector @width * Math.random(), @height * Math.random()
+
+    p = new Particle 6.0
+    p.colour = 'DC0048'
+    p.moveTo center
+    p.setRadius 10.0
+
+    p.behaviours.push @edge
+    p.behaviours.push @wander
+
+    @physics.particles.push p
 
   start: () =>
     @_setup()
@@ -44,21 +59,23 @@ class Layout
     min = new Vector -gap, -gap
     max = new Vector @width + gap, @height + gap
 
-    edge = new EdgeBounce min, max
+    @edge = new EdgeBounce min, max
+    @wander = new Wander 0.05, 100.0, 80.0
 
     center = new Vector @width * 0.5, @height * 0.5
 
     console.dir(center)
 
-    for i in [0..100]
-      p = new Particle 6.0
-      p.colour = 'DC0048'
-      p.moveTo center
-      p.setRadius 1.0
-
-      p.behaviours.push edge
-
-      @physics.particles.push p
+#    for i in [0..100]
+#      p = new Particle 6.0
+#      p.colour = 'DC0048'
+#      p.moveTo center
+#      p.setRadius 10.0
+#
+#      p.behaviours.push edge
+##      p.behaviours.push wander
+#
+#      @physics.particles.push p
 
 #    @renderer = new WebGLRenderer()
     @renderer = new CanvasRenderer()
@@ -72,6 +89,8 @@ class Layout
 
   _redraw: =>
 
+    requestAnimationFrame(@_redraw)
+
 #    console.log("Render")
 
 #    console.dir(@physics.particles)
@@ -80,6 +99,6 @@ class Layout
 
     @renderer.render @physics
 
-    requestAnimationFrame(@_redraw)
+
 
 window.Layout = Layout
