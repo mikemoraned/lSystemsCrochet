@@ -5,8 +5,6 @@ class Layout
     # BGBBGG
     @roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()]
     @outerLayer = @roots
-    @_setup()
-    @_redraw()
 
   grow: =>
     console.log("Grow!")
@@ -17,60 +15,71 @@ class Layout
       for child in parent.grow()
         if not firstChild?
           firstChild = child
-        @nodes.push(child)
-        @links.push({ source: parent, target: child })
-        if lastChild?
-          @links.push({ source: lastChild, target: child, strength: 0.5 })
+#        @nodes.push(child)
+#        @links.push({ source: parent, target: child })
+#        if lastChild?
+#          @links.push({ source: lastChild, target: child, strength: 0.5 })
         growth.push(child)
         lastChild = child
-    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
+#    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
     @outerLayer = growth
+#    @_redraw()
+
+  start: () =>
+    @_setup()
     @_redraw()
 
   _setup: () =>
-    @svg = d3.select(@selector)
-    @nodes = @outerLayer
-    @links = []
-    if @outerLayer.length > 1
-      for i in [0 ... @outerLayer.length - 1]
-        @links.push({ source: @outerLayer[i], target: @outerLayer[i+1] })
-      @links.push({ source: @outerLayer[@outerLayer.length - 1], target: @outerLayer[0] })
+    @physics = new Physics()
+    @height = window.innerHeight
+    @width = window.innerWidth
 
-    @force = d3.layout.force()
-      .nodes(@nodes)
-      .links(@links)
-      .size([@width, @height])
-      .start()
+    @stiffness = 1.0
+    @spacing = 2.0
 
-    @force.on("tick", () =>
-      @svg.selectAll(".link")
-        .data(@links)
-        .attr("x1", (d) -> d.source.x )
-        .attr("y1", (d) -> d.source.y )
-        .attr("x2", (d) -> d.target.x )
-        .attr("y2", (d) -> d.target.y )
+    @physics.integrator = new Verlet()
+    @physics.viscosity = 0.0001
 
-      @svg.selectAll(".node")
-        .data(@nodes)
-        .attr("cx", (d) -> d.x )
-        .attr("cy", (d) -> d.y )
-    )
+    gap = 50.0
+    min = new Vector -gap, -gap
+    max = new Vector @width + gap, @height + gap
+
+    edge = new EdgeBounce min, max
+
+    center = new Vector @width * 0.5, @height * 0.5
+
+    console.dir(center)
+
+    for i in [0..100]
+      p = new Particle 6.0
+      p.colour = 'DC0048'
+      p.moveTo center
+      p.setRadius 1.0
+
+      p.behaviours.push edge
+
+      @physics.particles.push p
+
+#    @renderer = new WebGLRenderer()
+    @renderer = new CanvasRenderer()
+
+    container = $(@selector)
+    container.get(0).appendChild @renderer.domElement
+
+    @renderer.renderMouse = false
+    @renderer.init @physics
+    @renderer.setSize @width, @height
 
   _redraw: =>
-    @force
-      .nodes(@nodes)
-      .links(@links).start()
 
-    link = @svg.selectAll(".link")
-      .data(@links)
-      .enter().append("line")
-      .attr("class", "link")
+#    console.log("Render")
 
-    node = @svg.selectAll(".node")
-      .data(@nodes, (d) -> d.id)
-      .enter().append("circle")
-      .attr("class", (d) -> "node #{d.color}")
-      .attr("r", 15)
-      .call(@force.drag)
+#    console.dir(@physics.particles)
+
+    do @physics.step
+
+    @renderer.render @physics
+
+    requestAnimationFrame(@_redraw)
 
 window.Layout = Layout

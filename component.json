@@ -4,6 +4,7 @@
   "dependencies": {
     "d3": "~3.1.4",
     "knockout": "~2.2.1",
-    "jquery": "~1.9.1"
+    "jquery": "~1.9.1",
+    "Coffee-Physics": "https://github.com/soulwire/Coffee-Physics.git"
   }
 }

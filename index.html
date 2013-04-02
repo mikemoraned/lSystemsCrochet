@@ -4,34 +4,50 @@
 <head>
     <title>LSystems Crochet</title>
     <style type="text/css">
-        svg {
-            border: 1px solid red;
-        }
-
-        circle.node.red {
-            fill: #f00
-        }
-        circle.node.blue {
-            fill: #00f
-        }
-        line.link {
-            stroke: #999;
-            stroke-opacity: .6;
+        html, body {
+            background: #1a1a1a;
+            margin: 0;
         }
 
     </style>
     <script src="components/jquery/jquery.min.js"></script>
     <script src="components/d3/d3.min.js"></script>
+    
+    <!-- Core -->
+    <script src="components/Coffee-Physics/compiled/base.js"></script>
+    <script src="components/Coffee-Physics/compiled/math/Random.js"></script>
+    <script src="components/Coffee-Physics/compiled/math/Vector.js"></script>
+    <!-- Integrators -->
+    <script src="components/Coffee-Physics/compiled/engine/integrator/Integrator.js"></script>
+    <script src="components/Coffee-Physics/compiled/engine/integrator/Euler.js"></script>
+    <script src="components/Coffee-Physics/compiled/engine/integrator/ImprovedEuler.js"></script>
+    <script src="components/Coffee-Physics/compiled/engine/integrator/Verlet.js"></script>
+    <!-- Engine -->
+    <script src="components/Coffee-Physics/compiled/engine/Particle.js"></script>
+    <script src="components/Coffee-Physics/compiled/engine/Physics.js"></script>
+    <script src="components/Coffee-Physics/compiled/engine/Spring.js"></script>
+    <!-- Behaviours -->
+    <script src="components/Coffee-Physics/compiled/behaviour/Behaviour.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/Attraction.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/Collision.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/ConstantForce.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/EdgeBounce.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/EdgeWrap.js"></script>
+    <script src="components/Coffee-Physics/compiled/behaviour/Wander.js"></script>
+    <!-- Demo Renderers -->
+    <script src="components/Coffee-Physics/compiled/demos/renderer/Renderer.js"></script>
+    <script src="components/Coffee-Physics/compiled/demos/renderer/CanvasRenderer.js"></script>
+    <script src="components/Coffee-Physics/compiled/demos/renderer/WebGLRenderer.js"></script>
+    <script src="components/Coffee-Physics/compiled/demos/renderer/DOMRenderer.js"></script>
+    
     <script src="components/knockout/build/output/knockout-latest.js"></script>
+
     <script src="js/Red.js"></script>
     <script src="js/Blue.js"></script>
     <script src="js/Layout.js"></script>
 </head>
 <body>
-    <button data-bind="click: layout.grow">Grow!</button>
-
-    <svg id="crochet" width="1000" height="1000" viewBox="0 0 5000 5000">
-    </svg>
+    <div id="crochet" data-bind="click: layout.grow"></div>
 
     <script type="text/javascript">
         $(function(){
@@ -43,6 +59,7 @@
             ko.applyBindings(model);
 
             console.log("Binding applied");
+            model.layout.start();
         });
     </script>
 </body>

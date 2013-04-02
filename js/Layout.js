@@ -16,13 +16,14 @@
       this._setup = function() {
         return Layout.prototype._setup.apply(_this, arguments);
       };
+      this.start = function() {
+        return Layout.prototype.start.apply(_this, arguments);
+      };
       this.grow = function() {
         return Layout.prototype.grow.apply(_this, arguments);
       };
       this.roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()];
       this.outerLayer = this.roots;
-      this._setup();
-      this._redraw();
     }
 
     Layout.prototype.grow = function() {
@@ -40,77 +41,53 @@
           if (firstChild == null) {
             firstChild = child;
           }
-          this.nodes.push(child);
-          this.links.push({
-            source: parent,
-            target: child
-          });
-          if (lastChild != null) {
-            this.links.push({
-              source: lastChild,
-              target: child,
-              strength: 0.5
-            });
-          }
           growth.push(child);
           lastChild = child;
         }
       }
-      this.links.push({
-        source: lastChild,
-        target: firstChild,
-        strength: 0.5
-      });
-      this.outerLayer = growth;
+      return this.outerLayer = growth;
+    };
+
+    Layout.prototype.start = function() {
+      this._setup();
       return this._redraw();
     };
 
     Layout.prototype._setup = function() {
-      var i, _i, _ref,
-        _this = this;
-      this.svg = d3.select(this.selector);
-      this.nodes = this.outerLayer;
-      this.links = [];
-      if (this.outerLayer.length > 1) {
-        for (i = _i = 0, _ref = this.outerLayer.length - 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-          this.links.push({
-            source: this.outerLayer[i],
-            target: this.outerLayer[i + 1]
-          });
-        }
-        this.links.push({
-          source: this.outerLayer[this.outerLayer.length - 1],
-          target: this.outerLayer[0]
-        });
+      var center, container, edge, gap, i, max, min, p, _i;
+      this.physics = new Physics();
+      this.height = window.innerHeight;
+      this.width = window.innerWidth;
+      this.stiffness = 1.0;
+      this.spacing = 2.0;
+      this.physics.integrator = new Verlet();
+      this.physics.viscosity = 0.0001;
+      gap = 50.0;
+      min = new Vector(-gap, -gap);
+      max = new Vector(this.width + gap, this.height + gap);
+      edge = new EdgeBounce(min, max);
+      center = new Vector(this.width * 0.5, this.height * 0.5);
+      console.dir(center);
+      for (i = _i = 0; _i <= 100; i = ++_i) {
+        p = new Particle(6.0);
+        p.colour = 'DC0048';
+        p.moveTo(center);
+        p.setRadius(1.0);
+        p.behaviours.push(edge);
+        this.physics.particles.push(p);
       }
-      this.force = d3.layout.force().nodes(this.nodes).links(this.links).size([this.width, this.height]).start();
-      return this.force.on("tick", function() {
-        _this.svg.selectAll(".link").data(_this.links).attr("x1", function(d) {
-          return d.source.x;
-        }).attr("y1", function(d) {
-          return d.source.y;
-        }).attr("x2", function(d) {
-          return d.target.x;
-        }).attr("y2", function(d) {
-          return d.target.y;
-        });
-        return _this.svg.selectAll(".node").data(_this.nodes).attr("cx", function(d) {
-          return d.x;
-        }).attr("cy", function(d) {
-          return d.y;
-        });
-      });
+      this.renderer = new CanvasRenderer();
+      container = $(this.selector);
+      container.get(0).appendChild(this.renderer.domElement);
+      this.renderer.renderMouse = false;
+      this.renderer.init(this.physics);
+      return this.renderer.setSize(this.width, this.height);
     };
 
     Layout.prototype._redraw = function() {
-      var link, node;
-      this.force.nodes(this.nodes).links(this.links).start();
-      link = this.svg.selectAll(".link").data(this.links).enter().append("line").attr("class", "link");
-      return node = this.svg.selectAll(".node").data(this.nodes, function(d) {
-        return d.id;
-      }).enter().append("circle").attr("class", function(d) {
-        return "node " + d.color;
-      }).attr("r", 15).call(this.force.drag);
+      this.physics.step();
+      this.renderer.render(this.physics);
+      return requestAnimationFrame(this._redraw);
     };
 
     return Layout;
