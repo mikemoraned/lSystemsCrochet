@@ -1,35 +1,9 @@
-#
-#class Visitor
-#
-#  constructor: (@posMap, @nodes, @links) ->
-#
-#
-#  visit: (parent, children) =>
-#    parentPos = @posMap[parent.id]
-#    if not parentPos?
-#      parentPos = @nodes.length
-#      @nodes.push(parent)
-#      @posMap[parent.id] = parentPos
-#    else
-#      @nodes.push(parent)
-#    console.log("posMap:")
-#    console.dir(@posMap)
-#    console.log("id #{parent.id} -> #{parentPos}")
-#    for child in children
-#      child.accept(@)
-#      childPos = @posMap[child.id]
-#      console.log("parent -> child: #{parentPos} -> #{childPos}")
-#      link = {}
-#      link.source = parentPos
-#      link.target = childPos
-#      console.log("link to child #{child.id}:")
-#      console.dir(link)
-#      @links.push(link)
-
 class Layout
 
   constructor: (@width, @height, @selector)->
-    @roots = [new Blue()]
+#    @roots = [new Blue()]
+    # BGBBGG
+    @roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()]
     @outerLayer = @roots
     @_setup()
     @_redraw()
@@ -37,11 +11,19 @@ class Layout
   grow: =>
     console.log("Grow!")
     growth = []
+    firstChild = null
+    lastChild = null
     for parent in @outerLayer
       for child in parent.grow()
+        if not firstChild?
+          firstChild = child
         @nodes.push(child)
         @links.push({ source: parent, target: child })
+        if lastChild?
+          @links.push({ source: lastChild, target: child, strength: 0.5 })
         growth.push(child)
+        lastChild = child
+    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
     @outerLayer = growth
     @_redraw()
 
@@ -49,6 +31,11 @@ class Layout
     @svg = d3.select(@selector)
     @nodes = @outerLayer
     @links = []
+    if @outerLayer.length > 1
+      for i in [0 ... @outerLayer.length - 1]
+        @links.push({ source: @outerLayer[i], target: @outerLayer[i+1] })
+      @links.push({ source: @outerLayer[@outerLayer.length - 1], target: @outerLayer[0] })
+
     @force = d3.layout.force()
       .nodes(@nodes)
       .links(@links)
@@ -83,20 +70,7 @@ class Layout
       .data(@nodes, (d) -> d.id)
       .enter().append("circle")
       .attr("class", (d) -> "node #{d.color}")
-      .attr("r", 5)
+      .attr("r", 15)
       .call(@force.drag)
-
-#  _traverse: () =>
-#    nodes = []
-#    links = []
-#
-#    visitor = new Visitor(@posMap, nodes, links)
-#    for root in @roots
-#      root.accept(visitor)
-#
-#    console.dir(nodes)
-#    console.dir(links)
-#
-#    [nodes,links]
 
 window.Layout = Layout

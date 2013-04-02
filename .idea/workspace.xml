@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9e101f0d-5be8-497e-b6ad-237486023bb8" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/Layout.coffee" afterPath="$PROJECT_DIR$/js/Layout.coffee" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/Layout.js" afterPath="$PROJECT_DIR$/js/Layout.js" />
     </list>
@@ -26,10 +27,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="index.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="12" selection-start="380" selection-end="380" vertical-scroll-proportion="-10.0">
+            <state line="39" column="45" selection-start="1070" selection-end="1070" vertical-scroll-proportion="0.58151096">
               <folding />
             </state>
           </provider>
@@ -53,10 +54,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Layout.coffee" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Layout.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/Layout.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="20" selection-start="1637" selection-end="1637" vertical-scroll-proportion="0.46116504">
+            <state line="25" column="4" selection-start="688" selection-end="688" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -79,8 +80,8 @@
         <option value="$PROJECT_DIR$/js/Node.coffee" />
         <option value="$PROJECT_DIR$/js/Red.coffee" />
         <option value="$PROJECT_DIR$/js/Blue.coffee" />
-        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/js/Layout.coffee" />
+        <option value="$PROJECT_DIR$/index.html" />
       </list>
     </option>
   </component>
@@ -392,13 +393,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="12" selection-start="380" selection-end="380" vertical-scroll-proportion="-10.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/js/Red.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4" column="18" selection-start="62" selection-end="62" vertical-scroll-proportion="0.0">
@@ -415,7 +409,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/Layout.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="66" column="20" selection-start="1637" selection-end="1637" vertical-scroll-proportion="0.46116504">
+        <state line="25" column="4" selection-start="688" selection-end="688" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="39" column="45" selection-start="1070" selection-end="1070" vertical-scroll-proportion="0.58151096">
           <folding />
         </state>
       </provider>
