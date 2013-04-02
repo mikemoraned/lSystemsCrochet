@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9e101f0d-5be8-497e-b6ad-237486023bb8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/Layout.coffee" afterPath="$PROJECT_DIR$/js/Layout.coffee" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/js/Layout.js" afterPath="$PROJECT_DIR$/js/Layout.js" />
     </list>
     <ignored path="lSystemsCrochet.iws" />
@@ -55,7 +55,7 @@
       <file leaf-file-name="Layout.coffee" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/Layout.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="84" column="5" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.93203884">
+            <state line="49" column="24" selection-start="1209" selection-end="1209" vertical-scroll-proportion="0.37864077">
               <folding />
             </state>
           </provider>
@@ -398,13 +398,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/Blue.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="18" selection-start="30" selection-end="30" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/js/Red.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4" column="18" selection-start="62" selection-end="62" vertical-scroll-proportion="0.0">
@@ -412,9 +405,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/js/Blue.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="18" selection-start="30" selection-end="30" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/js/Layout.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="5" selection-start="1965" selection-end="1965" vertical-scroll-proportion="0.93203884">
+        <state line="49" column="24" selection-start="1209" selection-end="1209" vertical-scroll-proportion="0.37864077">
           <folding />
         </state>
       </provider>
