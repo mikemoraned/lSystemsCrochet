@@ -3,10 +3,10 @@ class Blue
   @NEXT_ID : 10000
 
   constructor: ->
-    @color = "blue"
+    @color = "0000FF"
     @id = Blue.NEXT_ID
     Blue.NEXT_ID++
-    console.log("Id: #{@id}")
+#    console.log("Id: #{@id}")
     @children = []
 
   grow: () =>

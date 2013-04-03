@@ -13,14 +13,20 @@
       this._redraw = function() {
         return Layout.prototype._redraw.apply(_this, arguments);
       };
+      this._joinNodes = function(parent, child) {
+        return Layout.prototype._joinNodes.apply(_this, arguments);
+      };
+      this._addInitialParticles = function() {
+        return Layout.prototype._addInitialParticles.apply(_this, arguments);
+      };
+      this._newParticleFrom = function(node, parent) {
+        return Layout.prototype._newParticleFrom.apply(_this, arguments);
+      };
       this._setup = function() {
         return Layout.prototype._setup.apply(_this, arguments);
       };
       this.start = function() {
         return Layout.prototype.start.apply(_this, arguments);
-      };
-      this._newParticle = function() {
-        return Layout.prototype._newParticle.apply(_this, arguments);
       };
       this.grow = function() {
         return Layout.prototype.grow.apply(_this, arguments);
@@ -41,23 +47,20 @@
         _ref1 = parent.grow();
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           child = _ref1[_j];
-          this._newParticle();
+          this._newParticleFrom(child, parent);
+          this._joinNodes(parent, child);
+          if (firstChild == null) {
+            firstChild = child;
+          }
+          if (lastChild != null) {
+            this._joinNodes(lastChild, child);
+          }
           growth.push(child);
+          lastChild = child;
         }
       }
+      this._joinNodes(lastChild, firstChild);
       return this.outerLayer = growth;
-    };
-
-    Layout.prototype._newParticle = function() {
-      var center, p;
-      center = new Vector(this.width * Math.random(), this.height * Math.random());
-      p = new Particle(6.0);
-      p.colour = 'DC0048';
-      p.moveTo(center);
-      p.setRadius(10.0);
-      p.behaviours.push(this.edge);
-      p.behaviours.push(this.wander);
-      return this.physics.particles.push(p);
     };
 
     Layout.prototype.start = function() {
@@ -70,15 +73,16 @@
       this.physics = new Physics();
       this.height = window.innerHeight;
       this.width = window.innerWidth;
-      this.stiffness = 1.0;
-      this.spacing = 2.0;
+      this.stiffness = 0.1;
+      this.spacing = 10.0;
       this.physics.integrator = new Verlet();
-      this.physics.viscosity = 0.0001;
+      this.physics.viscosity = 0.9;
       gap = 50.0;
       min = new Vector(-gap, -gap);
       max = new Vector(this.width + gap, this.height + gap);
       this.edge = new EdgeBounce(min, max);
       this.wander = new Wander(0.05, 100.0, 80.0);
+      this.collision = new Collision();
       center = new Vector(this.width * 0.5, this.height * 0.5);
       console.dir(center);
       this.renderer = new CanvasRenderer();
@@ -86,7 +90,46 @@
       container.get(0).appendChild(this.renderer.domElement);
       this.renderer.renderMouse = false;
       this.renderer.init(this.physics);
-      return this.renderer.setSize(this.width, this.height);
+      this.renderer.setSize(this.width, this.height);
+      return this._addInitialParticles();
+    };
+
+    Layout.prototype._newParticleFrom = function(node, parent) {
+      var center, p;
+      center = new Vector(this.width * Math.random(), this.height * Math.random());
+      if (parent != null) {
+        center = new Vector(parent.particle.pos.x, parent.particle.pos.y);
+      }
+      p = new Particle(6.0);
+      p.colour = node.color;
+      p.moveTo(center);
+      p.setRadius(10.0);
+      p.behaviours.push(this.edge);
+      p.behaviours.push(this.collision);
+      this.collision.pool.push(p);
+      this.physics.particles.push(p);
+      return node.particle = p;
+    };
+
+    Layout.prototype._addInitialParticles = function() {
+      var i, initial, _i, _j, _len, _ref, _ref1;
+      _ref = this.outerLayer;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        initial = _ref[_i];
+        this._newParticleFrom(initial);
+      }
+      if (this.outerLayer.length > 1) {
+        for (i = _j = 0, _ref1 = this.outerLayer.length - 1; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+          this._joinNodes(this.outerLayer[i], this.outerLayer[i + 1]);
+        }
+        return this._joinNodes(this.outerLayer[this.outerLayer.length - 1], this.outerLayer[0]);
+      }
+    };
+
+    Layout.prototype._joinNodes = function(parent, child) {
+      var spring;
+      spring = new Spring(parent.particle, child.particle, this.spacing, this.stiffness);
+      return this.physics.springs.push(spring);
     };
 
     Layout.prototype._redraw = function() {

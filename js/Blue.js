@@ -15,10 +15,9 @@
       this.grow = function() {
         return Blue.prototype.grow.apply(_this, arguments);
       };
-      this.color = "blue";
+      this.color = "0000FF";
       this.id = Blue.NEXT_ID;
       Blue.NEXT_ID++;
-      console.log("Id: " + this.id);
       this.children = [];
     }
 
