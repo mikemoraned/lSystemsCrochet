@@ -5,9 +5,14 @@ class Layout
     # BGBBGG
     @roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()]
     @outerLayer = @roots
+    @growthIter = 1
 
   grow: =>
     console.log("Grow!")
+
+    @growthIter += 1
+#    @prevCollision = @collision
+    @collision = new Collision()
 
     growth = []
     firstChild = null
@@ -37,7 +42,7 @@ class Layout
     @width = window.innerWidth
 
     @stiffness = 0.1
-    @spacing = 10.0
+    @spacing = 50.0
 
     @physics.integrator = new Verlet()
 #    @physics.viscosity = 0.0001
@@ -81,22 +86,33 @@ class Layout
   _newParticleFrom: (node, parent) =>
     center = new Vector @width * Math.random(), @height * Math.random()
     if parent?
-      center = new Vector parent.particle.pos.x, parent.particle.pos.y
+      xPerturb = (-0.5 + Math.random())
+      yPerturb = (-0.5 + Math.random())
+      center = new Vector parent.particle.pos.x + xPerturb, parent.particle.pos.y + yPerturb
+
+    if parent?
+      parent.particle.colour = "FFFFFF"
 
     p = new Particle 6.0
 #    p.colour = 'DC0048'
     p.colour = node.color
     p.moveTo center
     p.setRadius 10.0
+#    p.setRadius(@growthIter + 5.0)
+#    p.setRadius 5.0
+    #(@growthIter + 5)
 
 #    repulsion = new Attraction p.pos, 200, -200000
+    repulsion = new Attraction p.pos, 20, -2000
 
     p.behaviours.push @edge
 #    p.behaviours.push @wander
+    if @prevCollision?
+      p.behaviours.push @prevCollision
+      @prevCollision.pool.push p
     p.behaviours.push @collision
-#    p.behaviours.push repulsion
-
     @collision.pool.push p
+    p.behaviours.push repulsion
 
     @physics.particles.push p
 

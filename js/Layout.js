@@ -33,11 +33,14 @@
       };
       this.roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()];
       this.outerLayer = this.roots;
+      this.growthIter = 1;
     }
 
     Layout.prototype.grow = function() {
       var child, firstChild, growth, lastChild, parent, _i, _j, _len, _len1, _ref, _ref1;
       console.log("Grow!");
+      this.growthIter += 1;
+      this.collision = new Collision();
       growth = [];
       firstChild = null;
       lastChild = null;
@@ -74,7 +77,7 @@
       this.height = window.innerHeight;
       this.width = window.innerWidth;
       this.stiffness = 0.1;
-      this.spacing = 10.0;
+      this.spacing = 50.0;
       this.physics.integrator = new Verlet();
       this.physics.viscosity = 0.9;
       gap = 50.0;
@@ -95,18 +98,29 @@
     };
 
     Layout.prototype._newParticleFrom = function(node, parent) {
-      var center, p;
+      var center, p, repulsion, xPerturb, yPerturb;
       center = new Vector(this.width * Math.random(), this.height * Math.random());
       if (parent != null) {
-        center = new Vector(parent.particle.pos.x, parent.particle.pos.y);
+        xPerturb = -0.5 + Math.random();
+        yPerturb = -0.5 + Math.random();
+        center = new Vector(parent.particle.pos.x + xPerturb, parent.particle.pos.y + yPerturb);
+      }
+      if (parent != null) {
+        parent.particle.colour = "FFFFFF";
       }
       p = new Particle(6.0);
       p.colour = node.color;
       p.moveTo(center);
       p.setRadius(10.0);
+      repulsion = new Attraction(p.pos, 20, -2000);
       p.behaviours.push(this.edge);
+      if (this.prevCollision != null) {
+        p.behaviours.push(this.prevCollision);
+        this.prevCollision.pool.push(p);
+      }
       p.behaviours.push(this.collision);
       this.collision.pool.push(p);
+      p.behaviours.push(repulsion);
       this.physics.particles.push(p);
       return node.particle = p;
     };
