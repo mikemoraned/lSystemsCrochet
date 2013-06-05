@@ -30,14 +30,14 @@
 <body>
     <button data-bind="click: layout.grow">Grow!</button>
 
-    <svg id="crochet" width="1500" height="1000" viewBox="0 0 3000 3000">
+    <svg id="crochet" width="1200" height="600" viewBox="0 0 2000 1500">
     </svg>
 
     <script type="text/javascript">
         $(function(){
 
             var model = {
-                'layout' : new Layout(3000, 3000, "#crochet")
+                'layout' : new Layout(2000, 1500, "#crochet")
             };
 
             ko.applyBindings(model);
