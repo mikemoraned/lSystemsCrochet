@@ -52,24 +52,7 @@ class VerletLayout
     # starting entities
     @origin = new Vec2(width/2, height/2)
 
-    #    layerComposite.drawParticles = (ctx, composite) =>
-##      console.log("draw composite")
-##      console.dir(composite)
-#      for point in composite.particles
-#        ctx.beginPath()
-#        ctx.arc(point.pos.x, point.pos.y, 1.3, 0, 2*Math.PI)
-#        ctx.fillStyle = "#2dad8f"
-#        ctx.fill()
-
     @sim.composites.push(@_placeInCircleAroundOrigin(@generations * 8.0, @outerLayer))
-
-    foop = new VerletJS.Composite()
-    first = new Particle(@origin)
-    last = new Particle(@origin.add(new Vec2(4.0, 4.0)))
-    foop.particles.push(first)
-    foop.particles.push(last)
-    foop.constraints.push(new DistanceConstraint(first, last, 0.05, 100.0))
-#    @sim.composites.push(foop)
 
     # animation loop
     @_loop()

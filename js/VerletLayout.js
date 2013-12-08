@@ -38,7 +38,7 @@
     };
 
     VerletLayout.prototype._setup = function() {
-      var canvas, dpr, first, foop, height, last, width;
+      var canvas, dpr, height, width;
       console.log("setup");
       canvas = document.getElementById(this.selector);
       width = parseInt(canvas.style.width);
@@ -52,12 +52,6 @@
       this.sim.gravity = new Vec2(0.0, 0.0);
       this.origin = new Vec2(width / 2, height / 2);
       this.sim.composites.push(this._placeInCircleAroundOrigin(this.generations * 8.0, this.outerLayer));
-      foop = new VerletJS.Composite();
-      first = new Particle(this.origin);
-      last = new Particle(this.origin.add(new Vec2(4.0, 4.0)));
-      foop.particles.push(first);
-      foop.particles.push(last);
-      foop.constraints.push(new DistanceConstraint(first, last, 0.05, 100.0));
       return this._loop();
     };
 
