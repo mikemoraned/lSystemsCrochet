@@ -59,7 +59,7 @@ class VerletLayout
 #        ctx.fillStyle = "#2dad8f"
 #        ctx.fill()
 
-    @sim.composites.push(@_placeInCircleAroundOrigin(@outerLayer))
+    @sim.composites.push(@_placeInCircleAroundOrigin(8.0, @outerLayer))
 
     foop = new VerletJS.Composite()
     first = new Particle(@origin)
@@ -72,24 +72,26 @@ class VerletLayout
     # animation loop
     @_loop()
 
-  _placeInCircleAroundOrigin: (nodes) =>
+  _placeInCircleAroundOrigin: (radius, nodes) =>
     layerComposite = new VerletJS.Composite()
     firstParticle = null
     lastParticleAdded = null
     count = 0
     inc = (Math.PI * 2.0) / nodes.length
 
+    stiffness = 0.1
+
     for node in nodes
-      node.particle = new Particle(@origin.add(new Vec2(8.0 * Math.sin(count * inc), 8.0 * Math.cos(count * inc))))
+      node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * inc), radius * Math.cos(count * inc))))
       layerComposite.particles.push(node.particle)
       if lastParticleAdded?
-        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, 0.1, 8.0))
+        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, radius))
       else
         firstParticle = node.particle
       lastParticleAdded = node.particle
       count += 1
 
-    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, 0.1, 8.0))
+    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, radius))
 
     layerComposite
 

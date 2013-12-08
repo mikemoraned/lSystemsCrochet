@@ -71,7 +71,7 @@
       this.sim.friction = 0.7;
       this.sim.gravity = new Vec2(0.0, 0.0);
       this.origin = new Vec2(width / 2, height / 2);
-      this.sim.composites.push(this._placeInCircleAroundOrigin(this.outerLayer));
+      this.sim.composites.push(this._placeInCircleAroundOrigin(8.0, this.outerLayer));
       foop = new VerletJS.Composite();
       first = new Particle(this.origin);
       last = new Particle(this.origin.add(new Vec2(4.0, 4.0)));
@@ -81,26 +81,27 @@
       return this._loop();
     };
 
-    VerletLayout.prototype._placeInCircleAroundOrigin = function(nodes) {
-      var count, firstParticle, inc, lastParticleAdded, layerComposite, node, _i, _len;
+    VerletLayout.prototype._placeInCircleAroundOrigin = function(radius, nodes) {
+      var count, firstParticle, inc, lastParticleAdded, layerComposite, node, stiffness, _i, _len;
       layerComposite = new VerletJS.Composite();
       firstParticle = null;
       lastParticleAdded = null;
       count = 0;
       inc = (Math.PI * 2.0) / nodes.length;
+      stiffness = 0.1;
       for (_i = 0, _len = nodes.length; _i < _len; _i++) {
         node = nodes[_i];
-        node.particle = new Particle(this.origin.add(new Vec2(8.0 * Math.sin(count * inc), 8.0 * Math.cos(count * inc))));
+        node.particle = new Particle(this.origin.add(new Vec2(radius * Math.sin(count * inc), radius * Math.cos(count * inc))));
         layerComposite.particles.push(node.particle);
         if (lastParticleAdded != null) {
-          layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, 0.1, 8.0));
+          layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, radius));
         } else {
           firstParticle = node.particle;
         }
         lastParticleAdded = node.particle;
         count += 1;
       }
-      layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, 0.1, 8.0));
+      layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, radius));
       return layerComposite;
     };
 
