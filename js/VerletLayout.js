@@ -61,17 +61,17 @@
     };
 
     VerletLayout.prototype._placeInCircleAroundOrigin = function(radius, nodes) {
-      var circumferenceSeparation, count, firstParticle, lastParticleAdded, layerComposite, node, radiusInc, stiffness, _i, _len;
+      var circumferenceSeparation, count, firstParticle, lastParticleAdded, layerComposite, node, stiffness, thetaInc, _i, _len;
       layerComposite = new VerletJS.Composite();
       firstParticle = null;
       lastParticleAdded = null;
       count = 0;
-      radiusInc = (Math.PI * 2.0) / nodes.length;
+      thetaInc = (Math.PI * 2.0) / nodes.length;
       circumferenceSeparation = ((Math.PI * 2.0) * radius) / nodes.length;
       stiffness = 0.1;
       for (_i = 0, _len = nodes.length; _i < _len; _i++) {
         node = nodes[_i];
-        node.particle = new Particle(this.origin.add(new Vec2(radius * Math.sin(count * radiusInc), radius * Math.cos(count * radiusInc))));
+        node.particle = new Particle(this.origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))));
         layerComposite.particles.push(node.particle);
         if (lastParticleAdded != null) {
           layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, circumferenceSeparation));

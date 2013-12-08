@@ -79,13 +79,13 @@ class VerletLayout
     firstParticle = null
     lastParticleAdded = null
     count = 0
-    radiusInc = (Math.PI * 2.0) / nodes.length
+    thetaInc = (Math.PI * 2.0) / nodes.length
     circumferenceSeparation = ((Math.PI * 2.0) * radius) / nodes.length
 
     stiffness = 0.1
 
     for node in nodes
-      node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * radiusInc), radius * Math.cos(count * radiusInc))))
+      node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))))
       layerComposite.particles.push(node.particle)
       if lastParticleAdded?
         layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, circumferenceSeparation))
