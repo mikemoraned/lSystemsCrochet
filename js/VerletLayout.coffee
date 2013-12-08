@@ -5,26 +5,28 @@ class VerletLayout
     # BGBBGG
     @roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()]
     @outerLayer = @roots
+    @generations = 1
     @_setup()
     @_redraw()
 
   grow: =>
     console.log("Grow!")
     growth = []
-    firstChild = null
-    lastChild = null
+#    firstChild = null
+#    lastChild = null
     for parent in @outerLayer
       for child in parent.grow()
-        if not firstChild?
-          firstChild = child
-        @nodes.push(child)
-        @links.push({ source: parent, target: child })
-        if lastChild?
-          @links.push({ source: lastChild, target: child, strength: 0.5 })
+#        if not firstChild?
+#          firstChild = child
+#        @nodes.push(child)
+#        @links.push({ source: parent, target: child })
+#        if lastChild?
+#          @links.push({ source: lastChild, target: child, strength: 0.5 })
         growth.push(child)
-        lastChild = child
-    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
+#        lastChild = child
+#    @links.push({ source: lastChild, target: firstChild, strength: 0.5 })
     @outerLayer = growth
+    @generations++
     @_redraw()
 
   _setup: () =>
@@ -59,7 +61,7 @@ class VerletLayout
 #        ctx.fillStyle = "#2dad8f"
 #        ctx.fill()
 
-    @sim.composites.push(@_placeInCircleAroundOrigin(8.0, @outerLayer))
+    @sim.composites.push(@_placeInCircleAroundOrigin(@generations * 8.0, @outerLayer))
 
     foop = new VerletJS.Composite()
     first = new Particle(@origin)
@@ -77,21 +79,22 @@ class VerletLayout
     firstParticle = null
     lastParticleAdded = null
     count = 0
-    inc = (Math.PI * 2.0) / nodes.length
+    radiusInc = (Math.PI * 2.0) / nodes.length
+    circumferenceSeparation = ((Math.PI * 2.0) * radius) / nodes.length
 
     stiffness = 0.1
 
     for node in nodes
-      node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * inc), radius * Math.cos(count * inc))))
+      node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * radiusInc), radius * Math.cos(count * radiusInc))))
       layerComposite.particles.push(node.particle)
       if lastParticleAdded?
-        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, radius))
+        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, circumferenceSeparation))
       else
         firstParticle = node.particle
       lastParticleAdded = node.particle
       count += 1
 
-    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, radius))
+    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, circumferenceSeparation))
 
     layerComposite
 
@@ -100,8 +103,8 @@ class VerletLayout
     @sim.draw()
     window.requestAnimFrame(@_loop)
 
-
   _redraw: =>
     console.log("redraw")
+    @sim.composites.push(@_placeInCircleAroundOrigin(@generations * 8.0, @outerLayer))
 
 window.VerletLayout = VerletLayout
