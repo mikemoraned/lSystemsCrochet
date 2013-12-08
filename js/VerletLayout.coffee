@@ -79,6 +79,7 @@ class VerletLayout
 
     for node in nodes
       node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))))
+      node.particle.lSystemNode = node
       layerComposite.particles.push(node.particle)
       if lastParticleAdded?
         layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, circumferenceSeparation))
@@ -89,7 +90,16 @@ class VerletLayout
 
     layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, circumferenceSeparation))
 
+    layerComposite.drawParticles = @_colorFromNode
+
     layerComposite
+
+  _colorFromNode: (ctx, composite) =>
+    for particle in composite.particles
+      ctx.beginPath()
+      ctx.arc(particle.pos.x, particle.pos.y, 1.3, 0, 2*Math.PI)
+      ctx.fillStyle = particle.lSystemNode.color
+      ctx.fill()
 
   _attachToParents: (offset, nodes) =>
     linkComposite = new VerletJS.Composite()

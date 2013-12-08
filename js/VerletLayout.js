@@ -7,6 +7,7 @@
     function VerletLayout(selector) {
       this.selector = selector;
       this._attachToParents = __bind(this._attachToParents, this);
+      this._colorFromNode = __bind(this._colorFromNode, this);
       this._placeInCircleAroundOrigin = __bind(this._placeInCircleAroundOrigin, this);
       this._redraw = __bind(this._redraw, this);
       this._loop = __bind(this._loop, this);
@@ -79,6 +80,7 @@
       for (_i = 0, _len = nodes.length; _i < _len; _i++) {
         node = nodes[_i];
         node.particle = new Particle(this.origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))));
+        node.particle.lSystemNode = node;
         layerComposite.particles.push(node.particle);
         if (lastParticleAdded != null) {
           layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, stiffness, circumferenceSeparation));
@@ -89,7 +91,22 @@
         count += 1;
       }
       layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, stiffness, circumferenceSeparation));
+      layerComposite.drawParticles = this._colorFromNode;
       return layerComposite;
+    };
+
+    VerletLayout.prototype._colorFromNode = function(ctx, composite) {
+      var particle, _i, _len, _ref, _results;
+      _ref = composite.particles;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        particle = _ref[_i];
+        ctx.beginPath();
+        ctx.arc(particle.pos.x, particle.pos.y, 1.3, 0, 2 * Math.PI);
+        ctx.fillStyle = particle.lSystemNode.color;
+        _results.push(ctx.fill());
+      }
+      return _results;
     };
 
     VerletLayout.prototype._attachToParents = function(offset, nodes) {
