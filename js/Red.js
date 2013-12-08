@@ -6,8 +6,8 @@
   Red = (function() {
     Red.NEXT_ID = 0;
 
-    function Red() {
-      this.accept = __bind(this.accept, this);
+    function Red(parent) {
+      this.parent = parent != null ? parent : null;
       this.grow = __bind(this.grow, this);
       this.color = "red";
       this.id = Red.NEXT_ID;
@@ -17,11 +17,7 @@
     }
 
     Red.prototype.grow = function() {
-      return this.children = [new Blue()];
-    };
-
-    Red.prototype.accept = function(visitor) {
-      return visitor.visit(this, this.children);
+      return this.children = [new Blue(this)];
     };
 
     return Red;

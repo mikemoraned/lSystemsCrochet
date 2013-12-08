@@ -6,9 +6,10 @@
   VerletLayout = (function() {
     function VerletLayout(selector) {
       this.selector = selector;
+      this._attachToParents = __bind(this._attachToParents, this);
+      this._placeInCircleAroundOrigin = __bind(this._placeInCircleAroundOrigin, this);
       this._redraw = __bind(this._redraw, this);
       this._loop = __bind(this._loop, this);
-      this._placeInCircleAroundOrigin = __bind(this._placeInCircleAroundOrigin, this);
       this._setup = __bind(this._setup, this);
       this.grow = __bind(this.grow, this);
       this.roots = [new Blue(), new Red(), new Blue(), new Blue(), new Red(), new Red()];
@@ -60,6 +61,18 @@
       return this._loop();
     };
 
+    VerletLayout.prototype._loop = function() {
+      this.sim.frame(16);
+      this.sim.draw();
+      return window.requestAnimFrame(this._loop);
+    };
+
+    VerletLayout.prototype._redraw = function() {
+      console.log("redraw");
+      this.sim.composites.push(this._placeInCircleAroundOrigin(this.generations * 8.0, this.outerLayer));
+      return this.sim.composites.push(this._attachToParents(8.0, this.outerLayer));
+    };
+
     VerletLayout.prototype._placeInCircleAroundOrigin = function(radius, nodes) {
       var circumferenceSeparation, count, firstParticle, lastParticleAdded, layerComposite, node, stiffness, thetaInc, _i, _len;
       layerComposite = new VerletJS.Composite();
@@ -85,15 +98,19 @@
       return layerComposite;
     };
 
-    VerletLayout.prototype._loop = function() {
-      this.sim.frame(16);
-      this.sim.draw();
-      return window.requestAnimFrame(this._loop);
-    };
-
-    VerletLayout.prototype._redraw = function() {
-      console.log("redraw");
-      return this.sim.composites.push(this._placeInCircleAroundOrigin(this.generations * 8.0, this.outerLayer));
+    VerletLayout.prototype._attachToParents = function(offset, nodes) {
+      var linkComposite, node, stiffness, _i, _len,
+        _this = this;
+      linkComposite = new VerletJS.Composite();
+      stiffness = 0.1;
+      for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+        node = nodes[_i];
+        if (node.parent != null) {
+          linkComposite.constraints.push(new DistanceConstraint(node.particle, node.parent.particle, stiffness, offset));
+        }
+      }
+      linkComposite.drawConstraints = function() {};
+      return linkComposite;
     };
 
     return VerletLayout;

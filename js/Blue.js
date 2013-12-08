@@ -6,8 +6,8 @@
   Blue = (function() {
     Blue.NEXT_ID = 10000;
 
-    function Blue() {
-      this.accept = __bind(this.accept, this);
+    function Blue(parent) {
+      this.parent = parent != null ? parent : null;
       this.grow = __bind(this.grow, this);
       this.color = "blue";
       this.id = Blue.NEXT_ID;
@@ -17,11 +17,7 @@
     }
 
     Blue.prototype.grow = function() {
-      return this.children = [new Blue(), new Red()];
-    };
-
-    Blue.prototype.accept = function(visitor) {
-      return visitor.visit(this, this.children);
+      return this.children = [new Blue(this), new Red(this)];
     };
 
     return Blue;
@@ -31,3 +27,7 @@
   window.Blue = Blue;
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=Blue.map
+*/

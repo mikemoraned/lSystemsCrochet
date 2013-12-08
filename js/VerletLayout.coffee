@@ -74,6 +74,16 @@ class VerletLayout
     # animation loop
     @_loop()
 
+  _loop: () =>
+    @sim.frame(16)
+    @sim.draw()
+    window.requestAnimFrame(@_loop)
+
+  _redraw: =>
+    console.log("redraw")
+    @sim.composites.push(@_placeInCircleAroundOrigin(@generations * 8.0, @outerLayer))
+    @sim.composites.push(@_attachToParents(8.0, @outerLayer))
+
   _placeInCircleAroundOrigin: (radius, nodes) =>
     layerComposite = new VerletJS.Composite()
     firstParticle = null
@@ -98,13 +108,16 @@ class VerletLayout
 
     layerComposite
 
-  _loop: () =>
-    @sim.frame(16)
-    @sim.draw()
-    window.requestAnimFrame(@_loop)
+  _attachToParents: (offset, nodes) =>
+    linkComposite = new VerletJS.Composite()
+    stiffness = 0.1
 
-  _redraw: =>
-    console.log("redraw")
-    @sim.composites.push(@_placeInCircleAroundOrigin(@generations * 8.0, @outerLayer))
+    for node in nodes
+      if node.parent?
+        linkComposite.constraints.push(new DistanceConstraint(node.particle, node.parent.particle, stiffness, offset))
+
+    linkComposite.drawConstraints = () =>
+
+    linkComposite
 
 window.VerletLayout = VerletLayout
