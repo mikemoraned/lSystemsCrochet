@@ -3,41 +3,23 @@
 <html>
 <head>
     <title>LSystems Crochet</title>
-    <style type="text/css">
-        svg {
-            border: 1px solid red;
-        }
-
-        circle.node.red {
-            fill: #f00
-        }
-        circle.node.blue {
-            fill: #00f
-        }
-        line.link {
-            stroke: #999;
-            stroke-opacity: .6;
-        }
-
-    </style>
     <script src="bower_components/jquery/jquery.min.js"></script>
-    <script src="bower_components/d3/d3.min.js"></script>
+    <script src="bower_components/verlet/js/verlet-1.0.0.min.js"></script>
     <script src="bower_components/knockout/build/output/knockout-latest.js"></script>
     <script src="js/Red.js"></script>
     <script src="js/Blue.js"></script>
-    <script src="js/Layout.js"></script>
+    <script src="js/VerletLayout.js"></script>
 </head>
 <body>
     <button data-bind="click: layout.grow">Grow!</button>
 
-    <svg id="crochet" width="1200" height="600" viewBox="0 0 2000 1500">
-    </svg>
+    <canvas id="crochet" style="width: 800px; height: 400px;"></canvas>
 
     <script type="text/javascript">
         $(function(){
 
             var model = {
-                'layout' : new Layout(2000, 1500, "#crochet")
+                'layout' : new VerletLayout("crochet")
             };
 
             ko.applyBindings(model);
