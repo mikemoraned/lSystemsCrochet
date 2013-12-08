@@ -49,23 +49,8 @@ class VerletLayout
 
     # starting entities
     @origin = new Vec2(width/2, height/2)
-    layerComposite = new VerletJS.Composite()
-    firstParticle = null
-    lastParticleAdded = null
-    count = 0
-    inc = (Math.PI * 2.0) / @outerLayer.length
-    for node in @outerLayer
-      node.particle = new Particle(@origin.add(new Vec2(8.0*Math.sin(count*inc), 8.0*Math.cos(count*inc))))
-      layerComposite.particles.push(node.particle)
-      if lastParticleAdded?
-        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, 0.1, 8.0))
-      else
-        firstParticle = node.particle
-      lastParticleAdded = node.particle
-      count += 1
-    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, 0.1, 8.0))
 
-#    layerComposite.drawParticles = (ctx, composite) =>
+    #    layerComposite.drawParticles = (ctx, composite) =>
 ##      console.log("draw composite")
 ##      console.dir(composite)
 #      for point in composite.particles
@@ -74,9 +59,7 @@ class VerletLayout
 #        ctx.fillStyle = "#2dad8f"
 #        ctx.fill()
 
-    layerComposite.drawConstraints = () =>
-
-    @sim.composites.push(layerComposite)
+    @sim.composites.push(@_placeInCircleAroundOrigin(@outerLayer))
 
     foop = new VerletJS.Composite()
     first = new Particle(@origin)
@@ -89,6 +72,27 @@ class VerletLayout
     # animation loop
     @_loop()
 
+  _placeInCircleAroundOrigin: (nodes) =>
+    layerComposite = new VerletJS.Composite()
+    firstParticle = null
+    lastParticleAdded = null
+    count = 0
+    inc = (Math.PI * 2.0) / nodes.length
+
+    for node in nodes
+      node.particle = new Particle(@origin.add(new Vec2(8.0 * Math.sin(count * inc), 8.0 * Math.cos(count * inc))))
+      layerComposite.particles.push(node.particle)
+      if lastParticleAdded?
+        layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, 0.1, 8.0))
+      else
+        firstParticle = node.particle
+      lastParticleAdded = node.particle
+      count += 1
+
+    layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, 0.1, 8.0))
+
+    layerComposite
+
   _loop: () =>
     @sim.frame(16)
     @sim.draw()
@@ -97,6 +101,5 @@ class VerletLayout
 
   _redraw: =>
     console.log("redraw")
-
 
 window.VerletLayout = VerletLayout

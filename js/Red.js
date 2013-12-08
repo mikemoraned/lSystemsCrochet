@@ -31,3 +31,7 @@
   window.Red = Red;
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=Red.map
+*/
