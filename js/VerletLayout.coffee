@@ -46,7 +46,7 @@ class VerletLayout
 
     # simulation
     @sim = new VerletJS(width, height, canvas)
-    @sim.friction = 0.7
+    @sim.friction = 0.3
     @sim.gravity = new Vec2(0.0, 0.0)
 
     # starting entities
@@ -92,7 +92,7 @@ class VerletLayout
     thetaInc = (Math.PI * 2.0) / nodes.length
     circumferenceSeparation = ((Math.PI * 2.0) * radius) / nodes.length
 
-    stiffness = 0.1
+    stiffness = 0.01
 
     for node in nodes
       node.particle = new Particle(@origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))))

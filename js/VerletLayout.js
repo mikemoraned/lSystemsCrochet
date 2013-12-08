@@ -48,7 +48,7 @@
       canvas.height = height * dpr;
       canvas.getContext("2d").scale(dpr, dpr);
       this.sim = new VerletJS(width, height, canvas);
-      this.sim.friction = 0.7;
+      this.sim.friction = 0.3;
       this.sim.gravity = new Vec2(0.0, 0.0);
       this.origin = new Vec2(width / 2, height / 2);
       this.sim.composites.push(this._placeInCircleAroundOrigin(this.generations * 8.0, this.outerLayer));
@@ -81,7 +81,7 @@
       count = 0;
       thetaInc = (Math.PI * 2.0) / nodes.length;
       circumferenceSeparation = ((Math.PI * 2.0) * radius) / nodes.length;
-      stiffness = 0.1;
+      stiffness = 0.01;
       for (_i = 0, _len = nodes.length; _i < _len; _i++) {
         node = nodes[_i];
         node.particle = new Particle(this.origin.add(new Vec2(radius * Math.sin(count * thetaInc), radius * Math.cos(count * thetaInc))));
