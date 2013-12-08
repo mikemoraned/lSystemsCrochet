@@ -57,10 +57,9 @@
     };
 
     VerletLayout.prototype._setup = function() {
-      var canvas, dpr, height, pin, segment, tire1, tire2, tire3, width;
+      var canvas, count, dpr, first, firstParticle, foop, height, inc, last, lastParticleAdded, layerComposite, node, width, _i, _len, _ref,
+        _this = this;
       console.log("setup");
-      this.nodes = this.outerLayer;
-      this.links = [];
       canvas = document.getElementById(this.selector);
       width = parseInt(canvas.style.width);
       height = parseInt(canvas.style.height);
@@ -69,13 +68,36 @@
       canvas.height = height * dpr;
       canvas.getContext("2d").scale(dpr, dpr);
       this.sim = new VerletJS(width, height, canvas);
-      this.sim.friction = 1;
-      segment = this.sim.lineSegments([new Vec2(20, 10), new Vec2(40, 10), new Vec2(60, 10), new Vec2(80, 10), new Vec2(100, 10)], 0.02);
-      pin = segment.pin(0);
-      pin = segment.pin(4);
-      tire1 = this.sim.tire(new Vec2(200, 50), 50, 30, 0.3, 0.9);
-      tire2 = this.sim.tire(new Vec2(400, 50), 70, 7, 0.1, 0.2);
-      tire3 = this.sim.tire(new Vec2(600, 50), 70, 3, 1, 1);
+      this.sim.friction = 0.7;
+      this.sim.gravity = new Vec2(0.0, 0.0);
+      this.origin = new Vec2(width / 2, height / 2);
+      layerComposite = new VerletJS.Composite();
+      firstParticle = null;
+      lastParticleAdded = null;
+      count = 0;
+      inc = (Math.PI * 2.0) / this.outerLayer.length;
+      _ref = this.outerLayer;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        node = _ref[_i];
+        node.particle = new Particle(this.origin.add(new Vec2(8.0 * Math.sin(count * inc), 8.0 * Math.cos(count * inc))));
+        layerComposite.particles.push(node.particle);
+        if (lastParticleAdded != null) {
+          layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, node.particle, 0.1, 8.0));
+        } else {
+          firstParticle = node.particle;
+        }
+        lastParticleAdded = node.particle;
+        count += 1;
+      }
+      layerComposite.constraints.push(new DistanceConstraint(lastParticleAdded, firstParticle, 0.1, 8.0));
+      layerComposite.drawConstraints = function() {};
+      this.sim.composites.push(layerComposite);
+      foop = new VerletJS.Composite();
+      first = new Particle(this.origin);
+      last = new Particle(this.origin.add(new Vec2(4.0, 4.0)));
+      foop.particles.push(first);
+      foop.particles.push(last);
+      foop.constraints.push(new DistanceConstraint(first, last, 0.05, 100.0));
       return this._loop();
     };
 
